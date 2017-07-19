@@ -13,26 +13,6 @@ access_token = 'SOME_ACCESS_TOKEN_HERE'
 # Probably no need to change this one, unless you want to create your own SO app
 key = 'uKDJS)Ck32rrSYrweVOoOQ(('
 
-class StackAnswer:
-    """
-    Object to hold all of an answer
-
-    Contains:
-    body - string that contians the Markdown of the answer
-    link - Link to the answer
-    username - Username of the author of the answer
-    title - title of the origional question
-    upvotes - score of the SO answer
-    """
-
-    def __init__(self, link, body, username, title, score, profile_image):
-        self.body = body
-        self.link = link
-        self.username = username
-        self.title = title
-        self.score = score
-        self.user_profile_image = profile_image
-
 async def fetch_answer(session, id):
     """
     (internal function) Fetches the json of an answer with the provided id
@@ -83,10 +63,17 @@ async def search(query):
             answer = await fetchAnswer(session_thing, answer_id)
         
         # Convert the answer's JSON into a StackAnswer object
-        answer = StackAnswer(answer.get('items', [{}])[0].get('share_link', "Not Found!"), answer.get('items', [{}])[0].get('body_markdown', "Not Found!"), answer.get('items', [{}])[0].get('owner', {}).get('display_name', "Not Found!"), question.get('items', [{}])[0].get('title', "Not Found!"), answer.get('items', [{}])[0].get('score', "Not Found!"), answer.get('items', [{}])[0].get('owner', {}).get('profile_image', "https://cdn.discordapp.com/avatars/196989358165852160/b7645b3661eaf16bb2510c2292057890.png?size=256"))
-        
+        answer = {
+                'link': answer.get('items', [{}])[0].get('share_link', "Not Found!"), 
+                'body': answer.get('items', [{}])[0].get('body_markdown', "Not Found!"), 
+                'answerer': answer.get('items', [{}])[0].get('owner', {}).get('display_name', "Not Found!"), 
+                'title': question.get('items', [{}])[0].get('title', "Not Found!"), 
+                'score': answer.get('items', [{}])[0].get('score', "Not Found!"),
+                'answerer_profile_image': answer.get('items', [{}])[0].get('owner', {}).get('profile_image', "https://cdn.discordapp.com/avatars/196989358165852160/b7645b3661eaf16bb2510c2292057890.png?size=256")
+        }
+
         # Debug log if required
-        #print("Link => {}\nBody => {}\nUsername => {}\nTitle => {}\nScore => {}\n".format(answer.link, answer.body, answer.username, answer.title, answer.score))
+        #print("Link => {}\nBody => {}\nUsername => {}\nTitle => {}\nScore => {}\n".format(answer['link'], answer['body'], answer['answerer'], answer['title'], answer['score']))
 
         return answer
 
