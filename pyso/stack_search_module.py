@@ -63,7 +63,7 @@ async def search(query):
             answer = await fetchAnswer(session_thing, answer_id)
         
         # Convert the answer's JSON into a StackAnswer object
-        answer = {
+        answer_dict = {
                 'link': answer.get('items', [{}])[0].get('share_link', "Not Found!"), 
                 'body': answer.get('items', [{}])[0].get('body_markdown', "Not Found!"), 
                 'answerer': answer.get('items', [{}])[0].get('owner', {}).get('display_name', "Not Found!"), 
@@ -75,5 +75,5 @@ async def search(query):
         # Debug log if required
         #print("Link => {}\nBody => {}\nUsername => {}\nTitle => {}\nScore => {}\n".format(answer['link'], answer['body'], answer['answerer'], answer['title'], answer['score']))
 
-        return answer
+        return answer_dict
 
