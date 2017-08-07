@@ -8,7 +8,7 @@ import ujson
 import async_timeout
 from .helpers import *
 
-class pyso:
+class PySo:
     def __init__(self, access_token, key='uKDJS)Ck32rrSYrweVOoOQ(('):
         """
         Creates a PySO instance that allows you to search Stack Overflow.
@@ -33,18 +33,19 @@ class pyso:
             answer_id = question.get("items", [{}])[0].get('accepted_answer_id', -1)
 
             # Grab the answer's JSON
-            answer = None
-            async with aiohttp.ClientSession() as session_thing:
-                answer = await fetchAnswer(session_thing, answer_id)
+            answer = await fetchAnswer(session, answer_id)
             
+            if answer.get('items', None) == None:
+                return None
+
             # Convert the answer's JSON into a StackAnswer object
             answer_dict = {
-                    'link': answer.get('items', [{}])[0].get('share_link', "Not Found!"), 
-                    'body': answer.get('items', [{}])[0].get('body_markdown', "Not Found!"), 
-                    'answerer': answer.get('items', [{}])[0].get('owner', {}).get('display_name', "Not Found!"), 
-                    'title': question.get('items', [{}])[0].get('title', "Not Found!"), 
-                    'score': answer.get('items', [{}])[0].get('score', "Not Found!"),
-                    'answerer_profile_image': answer.get('items', [{}])[0].get('owner', {}).get('profile_image', "https://cdn.discordapp.com/avatars/196989358165852160/b7645b3661eaf16bb2510c2292057890.png?size=256")
+                    'link': answer['items'][0].get('share_link', "Not Found!"), 
+                    'body': answer['items'][0].get('body_markdown', "Not Found!"), 
+                    'answerer': answer['items'][0].get('owner', {}).get('display_name', "Not Found!"), 
+                    'title': question.get['items'][0].get('title', "Not Found!"), 
+                    'score': answer.get['items'][0].get('score', "Not Found!"),
+                    'answerer_profile_image': answer.get['items'][0].get('owner', {}).get('profile_image', "https://cdn.discordapp.com/avatars/196989358165852160/b7645b3661eaf16bb2510c2292057890.png?size=256")
             }
 
             # Debug log if required
