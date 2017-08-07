@@ -1,8 +1,10 @@
-import aiohttp
-import ujson
+"""
+Helper Functions To Assist PySO To Find Questions And Answers
+"""
+
 import async_timeout
 
-async def fetch_answer(credentials, session, id):
+async def fetch_answer(credentials, session, question_id):
     """
     (internal function) Fetches the json of an answer with the provided id
     session: asyncio HTTP client session
@@ -14,7 +16,7 @@ async def fetch_answer(credentials, session, id):
         params = {'order': 'desc', 'sort': 'votes', 'site': 'stackoverflow', 'filter': '!*c891_gm3k)VJfVnZ1wmTSNzvYc7NzX-F4J3j', 'access_token': credentials[1], 'key': credentials[0]}
 
         # Set up a question get url & call the SE API with this url + the above parameters
-        url = "https://api.stackexchange.com/2.2/answers/" + str(id)
+        url = "https://api.stackexchange.com/2.2/answers/" + str(question_id)
         async with session.get(url, params=params) as resp:
             return await resp.json()
 

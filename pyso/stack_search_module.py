@@ -2,17 +2,19 @@
 Author: Alpha-V
 """
 
-import asyncio
 import aiohttp
-import ujson
-import async_timeout
-from .helpers import *
+from .helpers import fetch_answer, find_question
+
 
 class PySo:
+    """
+    Class that allows you to search Stack Overflow.
+    """
+
     def __init__(self, access_token, key='uKDJS)Ck32rrSYrweVOoOQ(('):
         """
         Creates a PySO instance that allows you to search Stack Overflow.
-        
+
         access_token: string | your stack exchange access token
         key: string | your application's key. Default has been set to the PySO app.
         """
@@ -35,17 +37,18 @@ class PySo:
             # Grab the answer's JSON
             answer = await fetch_answer(self.credentials, session, answer_id)
             
-            if answer.get('items', None) == None or len(answer.get('items')) == 0:
+            if answer.get('items', None) is None or len(answer.get('items')) == 0:
                 return None
 
             # Convert the answer's JSON into a StackAnswer object
+            first_answer = answer['items'][0]
             answer_dict = {
-                    'link': answer['items'][0].get('share_link', "Not Found!"), 
-                    'body': answer['items'][0].get('body_markdown', "Not Found!"), 
-                    'answerer': answer['items'][0].get('owner', {}).get('display_name', "Not Found!"), 
-                    'title': question['items'][0].get('title', "Not Found!"), 
-                    'score': answer['items'][0].get('score', "Not Found!"),
-                    'answerer_profile_image': answer['items'][0].get('owner', {}).get('profile_image', "https://cdn.discordapp.com/avatars/196989358165852160/b7645b3661eaf16bb2510c2292057890.png?size=256")
+                'link': first_answer.get('share_link', "Not Found!"), 
+                'body': first_answer.get('body_markdown', "Not Found!"), 
+                'answerer': first_answer.get('owner', {}).get('display_name', "Not Found!"), 
+                'title': question['items'][0].get('title', "Not Found!"), 
+                'score': first_answer.get('score', "Not Found!"),
+                'answerer_profile_image': first_answer.get('owner', {}).get('profile_image', "Not Found!")
             }
 
             # Debug log if required
