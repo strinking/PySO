@@ -37,7 +37,7 @@ class PySo:
             # Grab the answer's JSON
             answer = await fetch_answer(self.credentials, session, answer_id)
             
-            if answer.get('items', None) is None or len(answer.get('items')) == 0:
+            if not answer.get('items', None):
                 return None
 
             # Convert the answer's JSON into a StackAnswer object
