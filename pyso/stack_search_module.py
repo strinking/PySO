@@ -19,7 +19,7 @@ class PySo:
 
         self.credentials = (key, access_token)
 
-    async def search(query):
+    async def search(self, query):
         """ 
         Searches stack overflow for an answer to the provided query and returns a StackAnswer object containing the result.
         query: string | text to search Stack Overflow for
@@ -27,15 +27,15 @@ class PySo:
 
         async with aiohttp.ClientSession() as session:
             # Find a question matching the query
-            question = await find_question(session, query)
+            question = await find_question(self.credentials, session, query)
 
             # Grab the the first (top-voted) answer
             answer_id = question.get("items", [{}])[0].get('accepted_answer_id', -1)
 
             # Grab the answer's JSON
-            answer = await fetchAnswer(session, answer_id)
+            answer = await fetch_answer(self.credentials, session, answer_id)
             
-            if answer.get('items', None) == None:
+            if answer.get('items', None) == None or len(answer.get('items')) == 0:
                 return None
 
             # Convert the answer's JSON into a StackAnswer object
@@ -43,9 +43,9 @@ class PySo:
                     'link': answer['items'][0].get('share_link', "Not Found!"), 
                     'body': answer['items'][0].get('body_markdown', "Not Found!"), 
                     'answerer': answer['items'][0].get('owner', {}).get('display_name', "Not Found!"), 
-                    'title': question.get['items'][0].get('title', "Not Found!"), 
-                    'score': answer.get['items'][0].get('score', "Not Found!"),
-                    'answerer_profile_image': answer.get['items'][0].get('owner', {}).get('profile_image', "https://cdn.discordapp.com/avatars/196989358165852160/b7645b3661eaf16bb2510c2292057890.png?size=256")
+                    'title': question['items'][0].get('title', "Not Found!"), 
+                    'score': answer['items'][0].get('score', "Not Found!"),
+                    'answerer_profile_image': answer['items'][0].get('owner', {}).get('profile_image', "https://cdn.discordapp.com/avatars/196989358165852160/b7645b3661eaf16bb2510c2292057890.png?size=256")
             }
 
             # Debug log if required
